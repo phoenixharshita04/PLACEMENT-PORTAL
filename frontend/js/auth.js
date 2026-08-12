@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'
     ? 'http://localhost:8080/api/auth'
-    : 'https://placement-portal-backend.onrender.com/api/auth';
+    : 'https://placement-portal-wuc5.onrender.com/api/auth';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check if user is already logged in

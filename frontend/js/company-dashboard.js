@@ -1,4 +1,4 @@
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:8080/api' : 'https://placement-portal-backend.onrender.com/api';
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:8080/api' : 'https://placement-portal-wuc5.onrender.com/api';
 
 // Check Authentication
 document.addEventListener('DOMContentLoaded', () => {
