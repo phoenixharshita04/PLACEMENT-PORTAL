@@ -1,0 +1,520 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Light Mode Variables - Bold & Vibrant */
+    --primary-color: #2563eb; /* Electric Blue */
+    --primary-hover: #1d4ed8;
+    --secondary-color: #0f172a; /* Slate 900 */
+    --accent-color: #db2777; /* Bold Magenta */
+    --accent-hover: #be185d;
+    --bg-color: #f1f5f9; /* Crisp cool gray */
+    --surface-color: #ffffff;
+    --text-primary: #020617; /* Very dark blue/black */
+    --text-secondary: #475569;
+    --border-color: #cbd5e1;
+    --success-color: #059669; /* Strong Emerald */
+    --danger-color: #dc2626; /* Strong Red */
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+    --glass-shadow: 0 10px 40px rgba(37, 99, 235, 0.15);
+}
+
+body.dark-mode {
+    --primary-color: #00f3ff;
+    --primary-hover: #00c3cc;
+    --secondary-color: #ff2a5f;
+    --accent-color: #a8b2d1;
+    --bg-color: #0f172a;
+    --surface-color: rgba(15, 23, 42, 0.65);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at center, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
+                      radial-gradient(circle at bottom right, rgba(219, 39, 119, 0.12) 0%, transparent 45%);
+    background-attachment: fixed;
+    background-size: 150vw 150vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--glass-shadow);
+}
+
+/* Layout */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-left: 24px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--text-primary);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Skeleton Loaders */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right, var(--border-color) 4%, var(--surface-color) 25%, var(--border-color) 36%);
+    background-size: 1000px 100%;
+}
+
+.skeleton-card {
+    height: 150px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px; /* Slightly larger padding */
+    background: var(--surface-color);
+    border: 2px solid var(--border-color); /* Thicker border for softer look */
+    border-radius: 12px; /* Softer border radius */
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25); /* Bold focus ring */
+}
+
+/* Custom Select Dropdown styling */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+/* Typography */
+h1, h2, h3 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.d-flex { display: flex; }
+.justify-between { justify-content: space-between; }
+.align-center { align-items: center; }
+
+/* Status Badges */
+.badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.badge-applied { background-color: rgba(37, 99, 235, 0.15); color: #2563eb; } /* Bold Blue */
+.badge-shortlisted { background-color: rgba(147, 51, 234, 0.15); color: #9333ea; } /* Bold Purple */
+.badge-selected { background-color: rgba(22, 163, 74, 0.15); color: #16a34a; } /* Bold Green */
+.badge-rejected { background-color: rgba(220, 38, 38, 0.15); color: #dc2626; } /* Bold Red */
+.badge.warning { background-color: rgba(217, 119, 6, 0.15); color: #d97706; } /* Bold Orange */
+.badge.danger { background-color: rgba(220, 38, 38, 0.15); color: #dc2626; }
+.badge.info { background-color: rgba(37, 99, 235, 0.15); color: #2563eb; }
+
+/* Timeline Stepper */
+.timeline-stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px 0;
+    padding: 0 10px;
+}
+.timeline-stepper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 1;
+}
+.timeline-step {
+    position: relative;
+    z-index: 2;
+    background: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+.timeline-step.completed {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+.timeline-step.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+.timeline-step-label {
+    position: absolute;
+    top: 35px;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transform: translateX(-50%);
+    left: 50%;
+}
+
+/* Command Palette */
+#cmdPaletteOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+}
+#cmdPalette {
+    width: 90%;
+    max-width: 600px;
+    background: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+#cmdInput {
+    width: 100%;
+    border: none;
+    padding: 20px;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-primary);
+    outline: none;
+}
+.cmd-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+.cmd-item:hover, .cmd-item.active {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+/* (Holographic overlays removed for cleaner UI) */
+/* SortableJS Floating Physics Classes */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: var(--primary-color) !important;
+    border: 1px dashed var(--accent-color) !important;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.sortable-drag {
+    cursor: grabbing !important;
+    opacity: 1 !important;
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px var(--primary-color) !important;
+    z-index: 1000 !important;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* Give movable containers a grab cursor */
+.metrics-grid > *, #jobsList > *, #applicationsList > *, #testsList > * {
+    cursor: grab;
+}
+
+.metrics-grid > *:active, #jobsList > *:active, #applicationsList > *:active, #testsList > *:active {
+    cursor: grabbing;
+}
+
+/* Make dynamic lists into grid layouts for smooth Drag & Drop */
+#jobsList, #applicationsList, #testsList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+/* Add background color and clear layout positioning to your modals/cards */
+.job-card, .modal-content {
+  background-color: #1a1d24; /* Solid dark background */
+  z-index: 10;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ensure background filters don't spill through */
+.available-jobs-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Visual & UX Polish additions --- */
+
+/* Hover effects & Micro-interactions */
+.btn, .card, .glass-panel, .form-control, .sidebar-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:active, .card:active {
+    transform: scale(0.97);
+}
+
+/* Button Loading States */
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.8s ease-in-out infinite;
+}
+
+body.dark-mode .btn-outline.btn-loading::after {
+    border-top-color: var(--primary-color);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Scroll Fade-in Animations */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Interactive Calculator Styles */
+.calculator-section {
+    margin-top: 60px;
+    padding: 40px;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .calc-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.calc-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.calc-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 10px;
+    background: var(--surface-color);
+    border-left: 4px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+}
+
+.calc-result-item.eligible {
+    border-left-color: var(--success-color);
+}
+
+.calc-result-item.ineligible {
+    border-left-color: var(--danger-color);
+    opacity: 0.7;
+}
+
+.calc-status {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.calc-status.eligible {
+    color: var(--success-color);
+}
+
+.calc-status.ineligible {
+    color: var(--danger-color);
+}
+

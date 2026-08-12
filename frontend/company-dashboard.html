@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - PlacementConnect</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            align-self: start;
+        }
+
+        .sidebar-item {
+            display: block;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .jobs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .job-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #e0e7ff;
+            color: var(--primary-color);
+        }
+
+        .applications-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        .applications-table th, .applications-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .applications-table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .status-select {
+            padding: 0.25rem;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">PlacementConnect (Company)</a>
+        <div>
+            <span id="userNameDisplay" style="margin-right: 15px; font-weight: 500;"></span>
+            <button class="btn btn-outline" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-item active" data-target="dashboardSection">Dashboard</div>
+            <div class="sidebar-item" data-target="jobsSection">Manage Jobs</div>
+            <div class="sidebar-item" data-target="applicantsSection">Applicants List</div>
+            <div class="sidebar-item" data-target="reportsSection">Analytics</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section active">
+                <div class="glass-card" style="margin-bottom: 2rem;">
+                    <h3>Company Profile</h3>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" id="companyName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="companyEmail" class="form-control" readonly style="background-color: #f3f4f6;">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <div style="display: flex; gap: 10px;">
+
+    <select id="countryCode" class="form-control" style="width: 140px; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 8px;">
+        <option value="+93">+93 (Afghanistan)</option>
+        <option value="+355">+355 (Albania)</option>
+        <option value="+213">+213 (Algeria)</option>
+        <option value="+376">+376 (Andorra)</option>
+        <option value="+244">+244 (Angola)</option>
+        <option value="+54">+54 (Argentina)</option>
+        <option value="+374">+374 (Armenia)</option>
+        <option value="+61">+61 (Australia)</option>
+        <option value="+43">+43 (Austria)</option>
+        <option value="+994">+994 (Azerbaijan)</option>
+        <option value="+973">+973 (Bahrain)</option>
+        <option value="+880">+880 (Bangladesh)</option>
+        <option value="+375">+375 (Belarus)</option>
+        <option value="+32">+32 (Belgium)</option>
+        <option value="+501">+501 (Belize)</option>
+        <option value="+229">+229 (Benin)</option>
+        <option value="+975">+975 (Bhutan)</option>
+        <option value="+591">+591 (Bolivia)</option>
+        <option value="+387">+387 (Bosnia & Herz.)</option>
+        <option value="+267">+267 (Botswana)</option>
+        <option value="+55">+55 (Brazil)</option>
+        <option value="+673">+673 (Brunei)</option>
+        <option value="+359">+359 (Bulgaria)</option>
+        <option value="+226">+226 (Burkina Faso)</option>
+        <option value="+257">+257 (Burundi)</option>
+        <option value="+855">+855 (Cambodia)</option>
+        <option value="+237">+237 (Cameroon)</option>
+        <option value="+1">+1 (Canada/USA)</option>
+        <option value="+238">+238 (Cape Verde)</option>
+        <option value="+236">+236 (CAR)</option>
+        <option value="+235">+235 (Chad)</option>
+        <option value="+56">+56 (Chile)</option>
+        <option value="+86">+86 (China)</option>
+        <option value="+57">+57 (Colombia)</option>
+        <option value="+269">+269 (Comoros)</option>
+        <option value="+242">+242 (Congo)</option>
+        <option value="+506">+506 (Costa Rica)</option>
+        <option value="+385">+385 (Croatia)</option>
+        <option value="+53">+53 (Cuba)</option>
+        <option value="+357">+357 (Cyprus)</option>
+        <option value="+420">+420 (Czech Rep)</option>
+        <option value="+45">+45 (Denmark)</option>
+        <option value="+253">+253 (Djibouti)</option>
+        <option value="+593">+593 (Ecuador)</option>
+        <option value="+20">+20 (Egypt)</option>
+        <option value="+503">+503 (El Salvador)</option>
+        <option value="+240">+240 (Eq. Guinea)</option>
+        <option value="+291">+291 (Eritrea)</option>
+        <option value="+372">+372 (Estonia)</option>
+        <option value="+251">+251 (Ethiopia)</option>
+        <option value="+679">+679 (Fiji)</option>
+        <option value="+358">+358 (Finland)</option>
+        <option value="+33">+33 (France)</option>
+        <option value="+241">+241 (Gabon)</option>
+        <option value="+220">+220 (Gambia)</option>
+        <option value="+995">+995 (Georgia)</option>
+        <option value="+49">+49 (Germany)</option>
+        <option value="+233">+233 (Ghana)</option>
+        <option value="+30">+30 (Greece)</option>
+        <option value="+502">+502 (Guatemala)</option>
+        <option value="+224">+224 (Guinea)</option>
+        <option value="+592">+592 (Guyana)</option>
+        <option value="+509">+509 (Haiti)</option>
+        <option value="+504">+504 (Honduras)</option>
+        <option value="+36">+36 (Hungary)</option>
+        <option value="+354">+354 (Iceland)</option>
+        <option value="+91" selected>+91 (India)</option>
+        <option value="+62">+62 (Indonesia)</option>
+        <option value="+98">+98 (Iran)</option>
+        <option value="+964">+964 (Iraq)</option>
+        <option value="+353">+353 (Ireland)</option>
+        <option value="+972">+972 (Israel)</option>
+        <option value="+39">+39 (Italy)</option>
+        <option value="+81">+81 (Japan)</option>
+        <option value="+962">+962 (Jordan)</option>
+        <option value="+7">+7 (Kazakhstan)</option>
+        <option value="+254">+254 (Kenya)</option>
+        <option value="+965">+965 (Kuwait)</option>
+        <option value="+996">+996 (Kyrgyzstan)</option>
+        <option value="+856">+856 (Laos)</option>
+        <option value="+371">+371 (Latvia)</option>
+        <option value="+961">+961 (Lebanon)</option>
+        <option value="+266">+266 (Lesotho)</option>
+        <option value="+231">+231 (Liberia)</option>
+        <option value="+218">+218 (Libya)</option>
+        <option value="+423">+423 (Liechtenstein)</option>
+        <option value="+370">+370 (Lithuania)</option>
+        <option value="+352">+352 (Luxembourg)</option>
+        <option value="+261">+261 (Madagascar)</option>
+        <option value="+265">+265 (Malawi)</option>
+        <option value="+60">+60 (Malaysia)</option>
+        <option value="+960">+960 (Maldives)</option>
+        <option value="+223">+223 (Mali)</option>
+        <option value="+356">+356 (Malta)</option>
+        <option value="+52">+52 (Mexico)</option>
+        <option value="+373">+373 (Moldova)</option>
+        <option value="+377">+377 (Monaco)</option>
+        <option value="+976">+976 (Mongolia)</option>
+        <option value="+382">+382 (Montenegro)</option>
+        <option value="+212">+212 (Morocco)</option>
+        <option value="+258">+258 (Mozambique)</option>
+        <option value="+95">+95 (Myanmar)</option>
+        <option value="+264">+264 (Namibia)</option>
+        <option value="+977">+977 (Nepal)</option>
+        <option value="+31">+31 (Netherlands)</option>
+        <option value="+64">+64 (New Zealand)</option>
+        <option value="+505">+505 (Nicaragua)</option>
+        <option value="+227">+227 (Niger)</option>
+        <option value="+234">+234 (Nigeria)</option>
+        <option value="+47">+47 (Norway)</option>
+        <option value="+968">+968 (Oman)</option>
+        <option value="+92">+92 (Pakistan)</option>
+        <option value="+970">+970 (Palestine)</option>
+        <option value="+507">+507 (Panama)</option>
+        <option value="+675">+675 (PNG)</option>
+        <option value="+595">+595 (Paraguay)</option>
+        <option value="+51">+51 (Peru)</option>
+        <option value="+63">+63 (Philippines)</option>
+        <option value="+48">+48 (Poland)</option>
+        <option value="+351">+351 (Portugal)</option>
+        <option value="+974">+974 (Qatar)</option>
+        <option value="+40">+40 (Romania)</option>
+        <option value="+7">+7 (Russia)</option>
+        <option value="+250">+250 (Rwanda)</option>
+        <option value="+966">+966 (Saudi Arabia)</option>
+        <option value="+221">+221 (Senegal)</option>
+        <option value="+381">+381 (Serbia)</option>
+        <option value="+248">+248 (Seychelles)</option>
+        <option value="+232">+232 (Sierra Leone)</option>
+        <option value="+65">+65 (Singapore)</option>
+        <option value="+421">+421 (Slovakia)</option>
+        <option value="+386">+386 (Slovenia)</option>
+        <option value="+252">+252 (Somalia)</option>
+        <option value="+27">+27 (South Africa)</option>
+        <option value="+82">+82 (South Korea)</option>
+        <option value="+34">+34 (Spain)</option>
+        <option value="+94">+94 (Sri Lanka)</option>
+        <option value="+249">+249 (Sudan)</option>
+        <option value="+597">+597 (Suriname)</option>
+        <option value="+46">+46 (Sweden)</option>
+        <option value="+41">+41 (Switzerland)</option>
+        <option value="+963">+963 (Syria)</option>
+        <option value="+886">+886 (Taiwan)</option>
+        <option value="+992">+992 (Tajikistan)</option>
+        <option value="+255">+255 (Tanzania)</option>
+        <option value="+66">+66 (Thailand)</option>
+        <option value="+228">+228 (Togo)</option>
+        <option value="+216">+216 (Tunisia)</option>
+        <option value="+90">+90 (Turkey)</option>
+        <option value="+993">+993 (Turkmenistan)</option>
+        <option value="+256">+256 (Uganda)</option>
+        <option value="+380">+380 (Ukraine)</option>
+        <option value="+971">+971 (UAE)</option>
+        <option value="+44">+44 (UK)</option>
+        <option value="+598">+598 (Uruguay)</option>
+        <option value="+998">+998 (Uzbekistan)</option>
+        <option value="+58">+58 (Venezuela)</option>
+        <option value="+84">+84 (Vietnam)</option>
+        <option value="+967">+967 (Yemen)</option>
+        <option value="+260">+260 (Zambia)</option>
+        <option value="+263">+263 (Zimbabwe)</option>
+    </select>
+
+                                <input type="text" id="contactNumber" class="form-control" style="flex: 1;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="website" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Industry</label>
+                            <input type="text" id="industry" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="description" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Jobs Section -->
+            <div id="jobsSection" class="section">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="glass-card">
+                        <h3>Post a New Job</h3>
+                        <form id="jobForm">
+                            <div class="form-group">
+                                <label>Job Title</label>
+                                <input type="text" id="jobTitle" class="form-control" required>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Location</label>
+                                    <input type="text" id="jobLocation" class="form-control" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Salary Package</label>
+                                    <input type="text" id="jobSalary" class="form-control" placeholder="e.g. 12 LPA" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Job Description</label>
+                                <textarea id="jobDescription" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Required Skills</label>
+                                <input type="text" id="jobSkills" class="form-control" placeholder="e.g. Java, Spring Boot">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Minimum CGPA Required</label>
+                                    <input type="number" id="minCgpa" class="form-control" step="0.1" min="6.0" max="10" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Last Date to Apply</label>
+                                    <input type="date" id="jobLastDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Other Eligibility Criteria</label>
+                                <input type="text" id="jobEligibility" class="form-control" placeholder="e.g. 60% in 10th and 12th">
+                            </div>
+                            <div class="form-group">
+                                <label>Eligible Branches</label>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" id="jobBranches">
+                                    <label><input type="checkbox" value="ALL" checked> All Branches</label>
+                                    <label><input type="checkbox" value="CSE"> CSE</label>
+                                    <label><input type="checkbox" value="IT"> IT</label>
+                                    <label><input type="checkbox" value="ECE"> ECE</label>
+                                    <label><input type="checkbox" value="EEE"> EEE</label>
+                                    <label><input type="checkbox" value="ME"> ME</label>
+                                    <label><input type="checkbox" value="CE"> CE</label>
+                                    <label><input type="checkbox" value="CHE"> CHE</label>
+                                    <label><input type="checkbox" value="AE"> AE</label>
+                                    <label><input type="checkbox" value="AI & DS"> AI & DS</label>
+                                    <label><input type="checkbox" value="MTE"> MTE</label>
+                                    <label><input type="checkbox" value="BT"> BT</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>CTC Components</label>
+                                <input type="text" id="jobCtcComponents" class="form-control" placeholder="e.g. Base: 10 LPA, Bonus: 2 LPA">
+                            </div>
+                            <div style="display: flex; gap: 10px; background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 1rem;">
+                                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                    <label>Online Test Platform</label>
+                                    <select id="jobTestPlatform" class="form-control">
+                                        <option value="">None / Not Decided</option>
+                                        <option value="HackerRank">HackerRank</option>
+                                        <option value="Unstop">Unstop</option>
+                                        <option value="Mettl">Mettl</option>
+                                        <option value="CoCubes">CoCubes</option>
+                                        <option value="Amcat">Amcat</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                    <label>Test Date & Time</label>
+                                    <input type="datetime-local" id="jobTestDatetime" class="form-control">
+                                </div>
+                                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                    <label>Test Link</label>
+                                    <input type="url" id="jobTestLink" class="form-control" placeholder="Optional URL">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Selection Rounds</label>
+                                <textarea id="jobSelectionRounds" class="form-control" rows="2" placeholder="e.g. Round 1: Online Assessment, Round 2: Tech Interview"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Bond / Notice Details</label>
+                                <input type="text" id="jobBondDetails" class="form-control" placeholder="e.g. 2 years bond, 3 months notice">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%">Post Job</button>
+                        </form>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>Our Job Postings</h3>
+                        <div class="jobs-list" id="jobsList">
+                            <!-- Jobs will be loaded here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applicants Section -->
+            <div id="applicantsSection" class="section">
+                <div class="glass-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                        <h3 style="margin:0;" id="applicantsJobTitle">Job Applications</h3>
+                        <button class="btn btn-outline" style="padding: 0.4rem 1rem;" onclick="exportApplicants()">Export Applicant List (CSV)</button>
+                    </div>
+                    <table class="applications-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Roll No</th>
+                                <th>Dept</th>
+                                <th>CGPA</th>
+                                <th>Applied Date</th>
+                                <th>Status</th>
+                                <th>Resume</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTableBody">
+                            <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Select a job to view applicants.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reportsSection" class="section">
+                <h2 style="margin-top: 0; color: var(--primary-color);">Company Analytics</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+                    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top: 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block;">Overview</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.9rem; color: var(--text-muted);">Total Jobs Posted:</span>
+                                <span style="font-weight: bold; color: var(--primary-color);" id="reportTotalJobs">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.9rem; color: var(--text-muted);">Total Applications Received:</span>
+                                <span style="font-weight: bold; color: var(--primary-color);" id="reportTotalApps">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.9rem; color: var(--text-muted);">Total Interviews Scheduled:</span>
+                                <span style="font-weight: bold; color: #f59e0b;" id="reportTotalInterviews">0</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 0.9rem; color: var(--text-muted);">Total Students Selected:</span>
+                                <span style="font-weight: bold; color: #10b981;" id="reportTotalSelected">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <h3 style="margin-top: 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block;">Application Status Distribution</h3>
+                        <div style="margin-top: 1rem; max-width: 300px; margin-left: auto; margin-right: auto;">
+                            <canvas id="companyStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- Modal for Edit Job -->
+    <div id="editJobModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+        <div class="glass-card" style="width: 500px; max-width: 90%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                <h3 style="margin:0;">Edit Job</h3>
+                <button onclick="closeEditJobModal()" class="btn btn-outline" style="padding:0.2rem 0.8rem;">Close</button>
+            </div>
+            <form id="editJobForm">
+                <input type="hidden" id="editJobId">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" id="editJobTitle" class="form-control" required>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Location</label>
+                        <input type="text" id="editJobLocation" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Salary Package</label>
+                        <input type="text" id="editJobSalary" class="form-control" placeholder="e.g. 12 LPA" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Job Description</label>
+                    <textarea id="editJobDescription" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Required Skills</label>
+                    <input type="text" id="editJobSkills" class="form-control" placeholder="e.g. Java, Spring Boot">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Minimum CGPA Required</label>
+                        <input type="number" id="editMinCgpa" class="form-control" step="0.1" min="6.0" max="10" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Last Date to Apply</label>
+                        <input type="date" id="editJobLastDate" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Other Eligibility Criteria</label>
+                    <input type="text" id="editJobEligibility" class="form-control" placeholder="e.g. 60% in 10th and 12th">
+                </div>
+                <div class="form-group">
+                    <label>Eligible Branches</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" id="editJobBranches">
+                        <label><input type="checkbox" value="ALL"> All Branches</label>
+                        <label><input type="checkbox" value="CSE"> CSE</label>
+                        <label><input type="checkbox" value="IT"> IT</label>
+                        <label><input type="checkbox" value="ECE"> ECE</label>
+                        <label><input type="checkbox" value="EEE"> EEE</label>
+                        <label><input type="checkbox" value="ME"> ME</label>
+                        <label><input type="checkbox" value="CE"> CE</label>
+                        <label><input type="checkbox" value="CHE"> CHE</label>
+                        <label><input type="checkbox" value="AE"> AE</label>
+                        <label><input type="checkbox" value="AI & DS"> AI & DS</label>
+                        <label><input type="checkbox" value="MTE"> MTE</label>
+                        <label><input type="checkbox" value="BT"> BT</label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Online Test Platform</label>
+                        <select id="editJobTestPlatform" class="form-control">
+                            <option value="">None / Not Decided</option>
+                            <option value="HackerRank">HackerRank</option>
+                            <option value="Unstop">Unstop</option>
+                            <option value="Mettl">Mettl</option>
+                            <option value="CoCubes">CoCubes</option>
+                            <option value="Amcat">Amcat</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Test Date & Time</label>
+                        <input type="datetime-local" id="editJobTestDatetime" class="form-control">
+                    </div>
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Test Link</label>
+                        <input type="url" id="editJobTestLink" class="form-control" placeholder="Optional URL">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%">Update Job</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Generate Slots -->
+    <div id="generateSlotsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+        <div class="glass-card" style="width: 500px; max-width: 90%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                <h3 style="margin:0;">Generate Interview Slots</h3>
+                <button onclick="closeGenerateSlotsModal()" class="btn btn-outline" style="padding:0.2rem 0.8rem;">Close</button>
+            </div>
+            <form id="generateSlotsForm">
+                <input type="hidden" id="slotsJobId">
+                <div class="form-group">
+                    <label>Start Date & Time</label>
+                    <input type="datetime-local" id="slotsStartTime" class="form-control" required>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Number of Slots</label>
+                        <input type="number" id="slotsCount" class="form-control" min="1" max="50" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Duration (Minutes)</label>
+                        <input type="number" id="slotsDuration" class="form-control" min="15" max="120" value="30" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%">Generate Slots</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/company-dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+
+        // Initialize 3D Tilt Effect on cards
+        VanillaTilt.init(document.querySelectorAll(".card, .glass-card, .glass-panel:not(.sidebar)"), {
+            max: 5,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1,
+        });
+
+        // Parallax depth effect for main background elements
+        document.addEventListener("mousemove", (e) => {
+            const x = (window.innerWidth - e.pageX * 2) / 90;
+            const y = (window.innerHeight - e.pageY * 2) / 90;
+            document.body.style.backgroundPosition = `${x}px ${y}px`;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        // Make grids and lists draggable with smooth floating physics
+        document.querySelectorAll('#jobsList, #applicationsList, .metrics-grid, [style*="display: grid"]').forEach(grid => {
+            if(grid) {
+                new Sortable(grid, {
+                    animation: 400,
+                    easing: "cubic-bezier(0.25, 1, 0.5, 1)", // Smooth float physics
+                    ghostClass: 'sortable-ghost',
+                    dragClass: 'sortable-drag'
+                });
+            }
+        });
+    </script>
+</body>
+</html>

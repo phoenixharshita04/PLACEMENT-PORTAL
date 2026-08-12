@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Placement Portal</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/theme.js"></script>
+    <style>
+        .auth-container {
+            max-width: 450px;
+            margin: 80px auto;
+            padding: 40px;
+        }
+
+        .toggle-auth {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .toggle-auth a {
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="container">
+        <a href="index.html" class="logo">Campus Placement Portal</a>
+        <button id="themeToggleBtn" class="btn btn-outline" style="padding: 8px 12px; font-size: 1.1rem; display: inline-flex; align-items: center; justify-content: center;">
+            <span id="themeIcon">☀️</span>
+        </button>
+    </nav>
+
+    <main class="container">
+        <div class="glass-panel auth-container auth-card">
+            <!-- Login Form -->
+            <div id="loginSection">
+                <h2 class="text-center">Welcome Back</h2>
+                <p class="text-center mb-4">Log in to access your dashboard</p>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%">Log In</button>
+                    <div id="loginError"
+                        style="color: var(--danger-color); margin-top: 10px; font-size: 0.9rem; text-align: center;">
+                    </div>
+                </form>
+
+                <div class="toggle-auth">
+                    <a id="showForgot">Forgot Password?</a>
+                </div>
+                <div class="toggle-auth">
+                    Don't have an account? <a id="showRegister">Sign up</a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerSection" class="hidden">
+                <h2 class="text-center">Create Account</h2>
+                <p class="text-center mb-4">Join PlacementConnect today</p>
+
+                <div style="display:flex; margin-bottom:15px; border-bottom:1px solid #ccc;">
+                    <div id="tabStudent"
+                        style="flex:1; text-align:center; padding:10px; cursor:pointer; font-weight:bold; color:var(--primary-color); border-bottom:2px solid var(--primary-color);">
+                        Student</div>
+                    <div id="tabCompany" style="flex:1; text-align:center; padding:10px; cursor:pointer; color:gray;">
+                        Company</div>
+                </div>
+
+                <form id="registerForm">
+                    <!-- Common Fields -->
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <input type="email" id="regEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" class="form-control" required minlength="6">
+                    </div>
+
+                    <!-- Student Specific -->
+                    <div id="studentFields">
+                        <div class="form-group">
+                            <label for="regName">Full Name</label>
+                            <input type="text" id="regName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="regRollNo">Roll Number</label>
+                            <input type="text" id="regRollNo" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="regDept">Department</label>
+                            <select id="regDept" class="form-control" required>
+                                <option value="" disabled selected>Select Branch</option>
+                                <option value="CSE">Computer Science & Engineering (CSE)</option>
+                                <option value="IT">Information Technology (IT)</option>
+                                <option value="ECE">Electronics & Communication Engineering (ECE)</option>
+                                <option value="EEE">Electrical & Electronics Engineering (EEE)</option>
+                                <option value="ME">Mechanical Engineering (ME)</option>
+                                <option value="CE">Civil Engineering (CE)</option>
+                                <option value="CHE">Chemical Engineering (CHE)</option>
+                                <option value="AE">Aerospace Engineering (AE)</option>
+                                <option value="AI & DS">Artificial Intelligence & Data Science (AI & DS)</option>
+                                <option value="MTE">Mechatronics & Automation (MTE)</option>
+                                <option value="BT">Biotechnology (BT)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label for="regCgpa">CGPA</label>
+                                <input type="number" id="regCgpa" class="form-control" step="0.01" min="6.0" max="10">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="regYear">Grad Year</label>
+                                <input type="number" id="regYear" class="form-control" min="2020">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Specific -->
+                    <div id="companyFields" class="hidden">
+                        <div class="form-group">
+                            <label for="regCompanyName">Company Name</label>
+                            <input type="text" id="regCompanyName" class="form-control">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top:10px;">Create
+                        Account</button>
+                    <div id="registerError"
+                        style="color: var(--danger-color); margin-top: 10px; font-size: 0.9rem; text-align: center;">
+                    </div>
+                </form>
+
+                <div class="toggle-auth">
+                    Already have an account? <a id="showLogin">Log in</a>
+                </div>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgotSection" class="hidden">
+                <h2 class="text-center">Forgot Password</h2>
+                <p class="text-center mb-4">Enter your email to reset password</p>
+
+                <form id="forgotForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">Email Address</label>
+                        <input type="email" id="forgotEmail" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%">Reset Password</button>
+                    <div id="forgotMessage"
+                        style="color: var(--success-color); margin-top: 10px; font-size: 0.9rem; text-align: center;">
+                    </div>
+                </form>
+
+                <div class="toggle-auth">
+                    Back to <a id="showLoginFromForgot">Log in</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/animations.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+
+        // Initialize 3D Tilt Effect on cards
+        VanillaTilt.init(document.querySelectorAll(".auth-card"), {
+            max: 5,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1,
+        });
+
+        // Parallax depth effect for main background elements
+        document.addEventListener("mousemove", (e) => {
+            const x = (window.innerWidth - e.pageX * 2) / 90;
+            const y = (window.innerHeight - e.pageY * 2) / 90;
+            document.body.style.backgroundPosition = `${x}px ${y}px`;
+        });
+    </script>
+</body>
+</html>

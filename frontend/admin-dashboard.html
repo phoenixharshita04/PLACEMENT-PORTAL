@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PlacementConnect</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --primary-hover: #1e293b;
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --accent: #3b82f6;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f1f5f9;
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--primary-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .btn-delete {
+            background: var(--danger);
+            border: none;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-top: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .data-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        tr:hover td {
+            background: #f1f5f9;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">PlacementConnect Admin</a>
+        <button class="btn-outline" onclick="logout()">Logout</button>
+    </nav>
+
+    <div class="container">
+        <!-- Data Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('students')">Students</button>
+            <button class="tab-btn" onclick="switchTab('companies')">Companies</button>
+            <button class="tab-btn" onclick="switchTab('jobs')">Job Drives</button>
+            <button class="tab-btn" onclick="switchTab('applications')">Applications</button>
+            <button class="tab-btn" onclick="switchTab('reports')">Placement Reports</button>
+            <button class="tab-btn" onclick="switchTab('activityLogs')">Activity Logs</button>
+        </div>
+
+        <!-- Dashboard Metrics Section -->
+        <div class="data-card" id="dashboardSection">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Total Students</div>
+                    <div class="metric-value" id="metricStudents">0</div>
+                </div>
+                <div class="metric-card" style="border-left-color: #10b981;">
+                    <div class="metric-title">Total Companies</div>
+                    <div class="metric-value" id="metricCompanies">0</div>
+                </div>
+                <div class="metric-card" style="border-left-color: #8b5cf6;">
+                    <div class="metric-title">Job Postings</div>
+                    <div class="metric-value" id="metricJobs">0</div>
+                </div>
+                <div class="metric-card" style="border-left-color: #f59e0b;">
+                    <div class="metric-title">Applications</div>
+                    <div class="metric-value" id="metricApplications">0</div>
+                </div>
+                <div class="metric-card" style="border-left-color: #06b6d4;">
+                    <div class="metric-title">Placed Students</div>
+                    <div class="metric-value" id="metricPlaced">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-card hidden" id="studentsSection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0; min-width: 150px;">Students</h2>
+                
+                <!-- Shortlisting Filters -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <input type="number" id="filterCgpa" class="form-control" placeholder="Min CGPA" step="0.1" min="0" max="10" style="width: 100px; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                    <select id="filterBranch" class="form-control" style="width: 130px; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                        <option value="">All Branches</option>
+                        <option value="CSE">CSE</option>
+                        <option value="IT">IT</option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="ME">ME</option>
+                        <option value="CE">CE</option>
+                    </select>
+                    <!-- Simulated Backlogs filter (since backlogs may not exist in model, we can just add input and ignore it for now or implement client side if mock data has it) -->
+                    <input type="number" id="filterBacklogs" class="form-control" placeholder="Max Backlogs" min="0" style="width: 120px; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px;">
+                    
+                    <button class="btn-outline" style="background: var(--primary-color); color: white;" onclick="applyStudentFilters()">Filter</button>
+                    <button class="btn-outline" style="color: #64748b; border-color: #cbd5e1;" onclick="resetStudentFilters()">Reset</button>
+                </div>
+                
+                <!-- Export Actions -->
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-outline" style="color: #10b981; border-color: #10b981; display: flex; align-items: center; gap: 5px;" onclick="exportFilteredStudentsCSV()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Export Shortlist (CSV)
+                    </button>
+                    <button class="btn-outline" style="color: #8b5cf6; border-color: #8b5cf6; display: flex; align-items: center; gap: 5px;" onclick="bulkDownloadResumes()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Bulk Download Resumes (ZIP)
+                    </button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Roll No</th>
+                        <th>Department</th>
+                        <th>CGPA</th>
+                        <th>Grad Year</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="data-card hidden" id="companiesSection">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Company Name</th>
+                        <th>Industry</th>
+                        <th>Website</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="companiesTableBody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="data-card hidden" id="jobsSection">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="margin: 0;">Job Drives</h2>
+                <div>
+                    <input type="text" id="adminJobLocationFilter" class="form-control" placeholder="Filter by Location" style="min-width: 200px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" onkeyup="loadJobs()">
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Min CGPA</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="jobsTableBody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="data-card hidden" id="applicationsSection">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Resume</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsTableBody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="data-card hidden" id="reportsSection">
+            <h2 style="margin-top: 0; color: var(--primary-color);">Placement Analytics</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h3 style="margin-top: 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block;">Placement Summary</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                        <div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">Total Placed Students</div>
+                            <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="reportPlaced">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">Total Unplaced Students</div>
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef4444;" id="reportUnplaced">0</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                        <div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">Highest Package</div>
+                            <div style="font-size: 1.75rem; font-weight: bold; color: var(--primary-color);" id="reportHighest">50 LPA</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">Average Package</div>
+                            <div style="font-size: 1.75rem; font-weight: bold; color: #f59e0b;" id="reportAverage">8 LPA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h3 style="margin-top: 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block;">Application Status Distribution</h3>
+                    <div style="margin-top: 1rem;" id="statusDistributionContainer">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; grid-column: 1 / -1;">
+                    <h3 style="margin-top: 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block;">Placement by Branch</h3>
+                    <div style="margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        <canvas id="branchChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activity Logs Section -->
+        <div class="data-card hidden" id="activityLogsSection">
+            <h2 style="margin-top: 0; color: var(--primary-color);">System Audit Logs</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Log ID</th>
+                            <th>Action</th>
+                            <th>Performed By</th>
+                            <th>Date & Time</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityLogsTableBody">
+                        <tr><td colspan="5" style="text-align: center;">Loading logs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+
+        // Initialize 3D Tilt Effect on cards
+        VanillaTilt.init(document.querySelectorAll(".card, .data-card, .glass-panel:not(.sidebar)"), {
+            max: 5,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1,
+        });
+
+        // Parallax depth effect for main background elements
+        document.addEventListener("mousemove", (e) => {
+            const x = (window.innerWidth - e.pageX * 2) / 90;
+            const y = (window.innerHeight - e.pageY * 2) / 90;
+            document.body.style.backgroundPosition = `${x}px ${y}px`;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        // Make grids draggable with smooth floating physics
+        document.querySelectorAll('.metrics-grid, [style*="display: grid"]').forEach(grid => {
+            if(grid) {
+                new Sortable(grid, {
+                    animation: 400,
+                    easing: "cubic-bezier(0.25, 1, 0.5, 1)", // Smooth float physics
+                    ghostClass: 'sortable-ghost',
+                    dragClass: 'sortable-drag'
+                });
+            }
+        });
+    </script>
+</body>
+</html>

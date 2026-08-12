@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Placement Portal</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/theme.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .dashboard-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+        }
+        .sidebar-item {
+            display: block;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+        .main-content {
+            flex: 1;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .job-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        .company-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .job-details {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="container">
+        <a href="dashboard.html" class="logo">PlacementConnect</a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 15px;">
+            <button id="themeToggleBtn" style="background:none; border:none; color:var(--text-primary); cursor:pointer; font-size:1.2rem;" title="Toggle Dark/Light Mode">
+                <span id="themeIcon">☀️</span>
+            </button>
+            <span id="userNameDisplay" style="font-weight: 600;">Welcome, Student</span>
+            <button id="logoutBtn" class="btn btn-outline">Log Out</button>
+        </div>
+    </nav>
+
+    <main class="container dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar glass-panel">
+            <div class="sidebar-item active" data-target="dashboardSection">Dashboard</div>
+            <div class="sidebar-item" data-target="profileSection">My Profile</div>
+            <div class="sidebar-item" data-target="jobsSection">Available Jobs</div>
+            <div class="sidebar-item" data-target="applicationsSection">Applications History</div>
+            <div class="sidebar-item" data-target="testsSection">Upcoming Online Tests</div>
+            <div class="sidebar-item" data-target="resumeBuilderSection">Resume Builder</div>
+            <div class="sidebar-item" data-target="interviewCalendarSection">Interview Calendar</div>
+            <div class="sidebar-item" data-target="documentsVaultSection">Documents Vault</div>
+            <div class="sidebar-item" data-target="leaderboardSection">Placement Stats & Leaderboard</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content glass-panel" style="padding: 30px;">
+            
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section active">
+                <h2>Welcome to Your Dashboard</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: var(--primary-color); font-size: 2rem; margin: 0 0 10px 0;" id="dashTotalApplied">0</h3>
+                        <p style="color: var(--text-secondary); margin: 0;">Total Applications</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #10b981; font-size: 2rem; margin: 0 0 10px 0;" id="dashSelected">0</h3>
+                        <p style="color: var(--text-secondary); margin: 0;">Selected</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #f59e0b; font-size: 2rem; margin: 0 0 10px 0;" id="dashUnderReview">0</h3>
+                        <p style="color: var(--text-secondary); margin: 0;">Under Review / Shortlisted</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profileSection" class="section">
+                <h2>My Profile</h2>
+                <form id="profileForm" style="max-width: 600px;">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="profName" class="form-control" required>
+                    </div>
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Email Address</label>
+                            <input type="email" id="profEmail" class="form-control" disabled>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Mobile Number</label>
+                            <div style="display: flex; gap: 10px;">
+
+    <select id="countryCode" class="form-control" style="width: 140px; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 8px;">
+        <option value="+93">+93 (Afghanistan)</option>
+        <option value="+355">+355 (Albania)</option>
+        <option value="+213">+213 (Algeria)</option>
+        <option value="+376">+376 (Andorra)</option>
+        <option value="+244">+244 (Angola)</option>
+        <option value="+54">+54 (Argentina)</option>
+        <option value="+374">+374 (Armenia)</option>
+        <option value="+61">+61 (Australia)</option>
+        <option value="+43">+43 (Austria)</option>
+        <option value="+994">+994 (Azerbaijan)</option>
+        <option value="+973">+973 (Bahrain)</option>
+        <option value="+880">+880 (Bangladesh)</option>
+        <option value="+375">+375 (Belarus)</option>
+        <option value="+32">+32 (Belgium)</option>
+        <option value="+501">+501 (Belize)</option>
+        <option value="+229">+229 (Benin)</option>
+        <option value="+975">+975 (Bhutan)</option>
+        <option value="+591">+591 (Bolivia)</option>
+        <option value="+387">+387 (Bosnia & Herz.)</option>
+        <option value="+267">+267 (Botswana)</option>
+        <option value="+55">+55 (Brazil)</option>
+        <option value="+673">+673 (Brunei)</option>
+        <option value="+359">+359 (Bulgaria)</option>
+        <option value="+226">+226 (Burkina Faso)</option>
+        <option value="+257">+257 (Burundi)</option>
+        <option value="+855">+855 (Cambodia)</option>
+        <option value="+237">+237 (Cameroon)</option>
+        <option value="+1">+1 (Canada/USA)</option>
+        <option value="+238">+238 (Cape Verde)</option>
+        <option value="+236">+236 (CAR)</option>
+        <option value="+235">+235 (Chad)</option>
+        <option value="+56">+56 (Chile)</option>
+        <option value="+86">+86 (China)</option>
+        <option value="+57">+57 (Colombia)</option>
+        <option value="+269">+269 (Comoros)</option>
+        <option value="+242">+242 (Congo)</option>
+        <option value="+506">+506 (Costa Rica)</option>
+        <option value="+385">+385 (Croatia)</option>
+        <option value="+53">+53 (Cuba)</option>
+        <option value="+357">+357 (Cyprus)</option>
+        <option value="+420">+420 (Czech Rep)</option>
+        <option value="+45">+45 (Denmark)</option>
+        <option value="+253">+253 (Djibouti)</option>
+        <option value="+593">+593 (Ecuador)</option>
+        <option value="+20">+20 (Egypt)</option>
+        <option value="+503">+503 (El Salvador)</option>
+        <option value="+240">+240 (Eq. Guinea)</option>
+        <option value="+291">+291 (Eritrea)</option>
+        <option value="+372">+372 (Estonia)</option>
+        <option value="+251">+251 (Ethiopia)</option>
+        <option value="+679">+679 (Fiji)</option>
+        <option value="+358">+358 (Finland)</option>
+        <option value="+33">+33 (France)</option>
+        <option value="+241">+241 (Gabon)</option>
+        <option value="+220">+220 (Gambia)</option>
+        <option value="+995">+995 (Georgia)</option>
+        <option value="+49">+49 (Germany)</option>
+        <option value="+233">+233 (Ghana)</option>
+        <option value="+30">+30 (Greece)</option>
+        <option value="+502">+502 (Guatemala)</option>
+        <option value="+224">+224 (Guinea)</option>
+        <option value="+592">+592 (Guyana)</option>
+        <option value="+509">+509 (Haiti)</option>
+        <option value="+504">+504 (Honduras)</option>
+        <option value="+36">+36 (Hungary)</option>
+        <option value="+354">+354 (Iceland)</option>
+        <option value="+91" selected>+91 (India)</option>
+        <option value="+62">+62 (Indonesia)</option>
+        <option value="+98">+98 (Iran)</option>
+        <option value="+964">+964 (Iraq)</option>
+        <option value="+353">+353 (Ireland)</option>
+        <option value="+972">+972 (Israel)</option>
+        <option value="+39">+39 (Italy)</option>
+        <option value="+81">+81 (Japan)</option>
+        <option value="+962">+962 (Jordan)</option>
+        <option value="+7">+7 (Kazakhstan)</option>
+        <option value="+254">+254 (Kenya)</option>
+        <option value="+965">+965 (Kuwait)</option>
+        <option value="+996">+996 (Kyrgyzstan)</option>
+        <option value="+856">+856 (Laos)</option>
+        <option value="+371">+371 (Latvia)</option>
+        <option value="+961">+961 (Lebanon)</option>
+        <option value="+266">+266 (Lesotho)</option>
+        <option value="+231">+231 (Liberia)</option>
+        <option value="+218">+218 (Libya)</option>
+        <option value="+423">+423 (Liechtenstein)</option>
+        <option value="+370">+370 (Lithuania)</option>
+        <option value="+352">+352 (Luxembourg)</option>
+        <option value="+261">+261 (Madagascar)</option>
+        <option value="+265">+265 (Malawi)</option>
+        <option value="+60">+60 (Malaysia)</option>
+        <option value="+960">+960 (Maldives)</option>
+        <option value="+223">+223 (Mali)</option>
+        <option value="+356">+356 (Malta)</option>
+        <option value="+52">+52 (Mexico)</option>
+        <option value="+373">+373 (Moldova)</option>
+        <option value="+377">+377 (Monaco)</option>
+        <option value="+976">+976 (Mongolia)</option>
+        <option value="+382">+382 (Montenegro)</option>
+        <option value="+212">+212 (Morocco)</option>
+        <option value="+258">+258 (Mozambique)</option>
+        <option value="+95">+95 (Myanmar)</option>
+        <option value="+264">+264 (Namibia)</option>
+        <option value="+977">+977 (Nepal)</option>
+        <option value="+31">+31 (Netherlands)</option>
+        <option value="+64">+64 (New Zealand)</option>
+        <option value="+505">+505 (Nicaragua)</option>
+        <option value="+227">+227 (Niger)</option>
+        <option value="+234">+234 (Nigeria)</option>
+        <option value="+47">+47 (Norway)</option>
+        <option value="+968">+968 (Oman)</option>
+        <option value="+92">+92 (Pakistan)</option>
+        <option value="+970">+970 (Palestine)</option>
+        <option value="+507">+507 (Panama)</option>
+        <option value="+675">+675 (PNG)</option>
+        <option value="+595">+595 (Paraguay)</option>
+        <option value="+51">+51 (Peru)</option>
+        <option value="+63">+63 (Philippines)</option>
+        <option value="+48">+48 (Poland)</option>
+        <option value="+351">+351 (Portugal)</option>
+        <option value="+974">+974 (Qatar)</option>
+        <option value="+40">+40 (Romania)</option>
+        <option value="+7">+7 (Russia)</option>
+        <option value="+250">+250 (Rwanda)</option>
+        <option value="+966">+966 (Saudi Arabia)</option>
+        <option value="+221">+221 (Senegal)</option>
+        <option value="+381">+381 (Serbia)</option>
+        <option value="+248">+248 (Seychelles)</option>
+        <option value="+232">+232 (Sierra Leone)</option>
+        <option value="+65">+65 (Singapore)</option>
+        <option value="+421">+421 (Slovakia)</option>
+        <option value="+386">+386 (Slovenia)</option>
+        <option value="+252">+252 (Somalia)</option>
+        <option value="+27">+27 (South Africa)</option>
+        <option value="+82">+82 (South Korea)</option>
+        <option value="+34">+34 (Spain)</option>
+        <option value="+94">+94 (Sri Lanka)</option>
+        <option value="+249">+249 (Sudan)</option>
+        <option value="+597">+597 (Suriname)</option>
+        <option value="+46">+46 (Sweden)</option>
+        <option value="+41">+41 (Switzerland)</option>
+        <option value="+963">+963 (Syria)</option>
+        <option value="+886">+886 (Taiwan)</option>
+        <option value="+992">+992 (Tajikistan)</option>
+        <option value="+255">+255 (Tanzania)</option>
+        <option value="+66">+66 (Thailand)</option>
+        <option value="+228">+228 (Togo)</option>
+        <option value="+216">+216 (Tunisia)</option>
+        <option value="+90">+90 (Turkey)</option>
+        <option value="+993">+993 (Turkmenistan)</option>
+        <option value="+256">+256 (Uganda)</option>
+        <option value="+380">+380 (Ukraine)</option>
+        <option value="+971">+971 (UAE)</option>
+        <option value="+44">+44 (UK)</option>
+        <option value="+598">+598 (Uruguay)</option>
+        <option value="+998">+998 (Uzbekistan)</option>
+        <option value="+58">+58 (Venezuela)</option>
+        <option value="+84">+84 (Vietnam)</option>
+        <option value="+967">+967 (Yemen)</option>
+        <option value="+260">+260 (Zambia)</option>
+        <option value="+263">+263 (Zimbabwe)</option>
+    </select>
+
+                                <input type="text" id="profMobile" class="form-control" style="flex: 1;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Roll Number</label>
+                            <input type="text" id="profRollNo" class="form-control" disabled>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Branch</label>
+                            <select id="profDept" class="form-control" required>
+                                <option value="" disabled selected>Select Branch</option>
+                                <option value="CSE">Computer Science & Engineering (CSE)</option>
+                                <option value="IT">Information Technology (IT)</option>
+                                <option value="ECE">Electronics & Communication Engineering (ECE)</option>
+                                <option value="EEE">Electrical & Electronics Engineering (EEE)</option>
+                                <option value="ME">Mechanical Engineering (ME)</option>
+                                <option value="CE">Civil Engineering (CE)</option>
+                                <option value="CHE">Chemical Engineering (CHE)</option>
+                                <option value="AE">Aerospace Engineering (AE)</option>
+                                <option value="AI & DS">Artificial Intelligence & Data Science (AI & DS)</option>
+                                <option value="MTE">Mechatronics & Automation (MTE)</option>
+                                <option value="BT">Biotechnology (BT)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>CGPA</label>
+                            <input type="number" id="profCgpa" class="form-control" step="0.01" min="6.0" max="10" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Year of Study</label>
+                            <input type="number" id="profYear" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Skills</label>
+                        <input type="text" id="profSkills" class="form-control" placeholder="e.g. Java, Python, React">
+                    </div>
+                    <div class="form-group">
+                        <label>Resume (URL or Path)</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="profResume" class="form-control" style="flex: 1;">
+                            <a id="resumeViewBtn" href="#" target="_blank" class="btn btn-outline" style="display: none;">View</a>
+                        </div>
+                    </div>
+                    <div class="form-group" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                        <label>Upload New Resume (PDF only)</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="file" id="resumeFile" class="form-control" accept=".pdf" style="flex: 1;">
+                            <button type="button" id="uploadResumeBtn" class="btn btn-outline">Upload</button>
+                        </div>
+                        <div id="uploadMessage" style="font-size: 0.85rem; margin-top: 5px;"></div>
+                    </div>
+                    <div class="form-group" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                        <label>Placement Willingness</label>
+                        <select id="profWillingness" class="form-control">
+                            <option value="false">Actively Seeking Placement</option>
+                            <option value="true">Opted Out (Higher Studies / Entrepreneurship / Off-Campus)</option>
+                        </select>
+                        <div style="font-size: 0.85rem; margin-top: 5px; color: var(--text-secondary);">Note: Opting out will lock application forms.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <div id="profMessage" style="margin-top: 15px; font-weight: 500;"></div>
+                </form>
+            </div>
+
+            <!-- Jobs Section -->
+            <div id="jobsSection" class="section">
+                <h2>Available Job Drives</h2>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(37, 99, 235, 0.1);">
+                    <input type="text" id="jobSearch" class="form-control" placeholder="Search by Job Title or Company..." style="flex: 2; min-width: 200px;">
+                    
+                    <select id="filterDomain" class="form-control" style="flex: 1; min-width: 150px;">
+                        <option value="">All Domains</option>
+                        <option value="Software">Software</option>
+                        <option value="Core">Core</option>
+                        <option value="Analytics">Analytics</option>
+                        <option value="Finance">Finance</option>
+                    </select>
+
+                    <select id="filterPackage" class="form-control" style="flex: 1; min-width: 150px;">
+                        <option value="">Any Package</option>
+                        <option value="5">&gt; 5 LPA</option>
+                        <option value="10">&gt; 10 LPA</option>
+                        <option value="20">&gt; 20 LPA</option>
+                        <option value="30">&gt; 30 LPA</option>
+                    </select>
+
+                    <select id="filterLocation" class="form-control" style="flex: 1; min-width: 150px;">
+                        <option value="">Any Location</option>
+                        <option value="Remote">Remote</option>
+                        <option value="On-site">On-site</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                    
+                    <select id="jobBranch" class="form-control" style="flex: 1; min-width: 120px;">
+                        <option value="">All Branches</option>
+                        <option value="CSE">CSE</option>
+                        <option value="IT">IT</option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="ME">ME</option>
+                        <option value="CE">CE</option>
+                        <option value="CHE">CHE</option>
+                    </select>
+
+                    <button id="jobSearchBtn" class="btn btn-primary" style="flex: 0.5; min-width: 100px;">Apply Filters</button>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; cursor:pointer; color: var(--text-primary); font-weight: 500;">
+                        <input type="checkbox" id="eligibleFilterCheckbox" style="margin-right:8px;" checked>
+                        Show Only Eligible Jobs (by CGPA/Branch)
+                    </label>
+                    <span id="cgpaImpactBadge" class="badge" style="background:#e0f2fe; color:#0284c7; display:none;">Eligible for 0% of Active Drives</span>
+                </div>
+                <p class="mb-4" style="color: var(--text-secondary);">Jobs below are filtered based on your CGPA eligibility.</p>
+                <div id="jobsList">
+                    <!-- Jobs will be loaded here dynamically -->
+                    <div class="text-center" style="padding: 40px;">Loading jobs...</div>
+                </div>
+            </div>
+
+            <!-- Applications Section -->
+            <div class="section" id="applicationsSection">
+                <h2>Applications History</h2>
+                <div id="applicationsList">
+                    <!-- Applications will be loaded here dynamically -->
+                    <div class="text-center" style="padding: 40px;">Loading applications...</div>
+                </div>
+            </div>
+
+            <!-- Upcoming Tests Section -->
+            <div class="section" id="testsSection">
+                <h2>Upcoming Online Tests</h2>
+                <div id="testsList">
+                    <div class="text-center" style="padding: 40px;">Loading tests...</div>
+                </div>
+            </div>
+
+            <!-- Resume Builder Section -->
+            <div class="section" id="resumeBuilderSection">
+                <h2>Resume Builder & AI Portfolio Review</h2>
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <div>
+                        <h3>Update Resume Profile</h3>
+                        <form id="resumeForm">
+                            <div class="form-group">
+                                <label>Projects (Markdown or Plain Text)</label>
+                                <textarea id="profileProjects" class="form-control" rows="4" placeholder="List your major projects"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Experience (Markdown or Plain Text)</label>
+                                <textarea id="profileExperience" class="form-control" rows="4" placeholder="List your internships or work experience"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Resume Profile</button>
+                        </form>
+                        
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+                            <button id="generateResumeBtn" class="btn btn-outline" style="width: 100%; border-color: var(--accent); color: var(--accent);">Generate Standard Resume (PDF)</button>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(37, 99, 235, 0.2);">
+                        <h3 style="margin-top: 0; color: var(--primary-color);">AI Resume Scorer</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Select a job to check your resume match percentage.</p>
+                        
+                        <select id="aiJobSelect" class="form-control" style="margin-bottom: 1rem;">
+                            <option value="">Select a Job to Analyze...</option>
+                        </select>
+                        <button id="aiAnalyzeBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;">Analyze Match</button>
+                        
+                        <div id="aiScoreResult" style="display: none;">
+                            <div style="font-size: 3rem; font-weight: bold; color: #10b981; text-align: center;" id="aiScorePercentage">0%</div>
+                            <div style="text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Match Score</div>
+                            
+                            <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Matched Skills:</h4>
+                            <div id="aiMatchedSkills" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;"></div>
+                            
+                            <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Missing Skills (Add these to improve):</h4>
+                            <div id="aiMissingSkills" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interview Calendar Section -->
+            <div class="section" id="interviewCalendarSection">
+                <h2>Interview Schedule & Calendar</h2>
+                <div id="calendar" style="margin-top: 1.5rem; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"></div>
+            </div>
+
+            <!-- Documents Vault Section -->
+            <div class="section" id="documentsVaultSection">
+                <h2>Offer Letters & Documents Vault</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Securely store and manage your academic and professional documents.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <!-- 10th Marksheet -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; background: #f8fafc; text-align: center;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem;">10th Marksheet</h3>
+                        <div id="tenthDocStatus" style="margin: 1rem 0; min-height: 40px;">
+                            <span class="badge" style="background:#fee2e2; color:#ef4444;">Not Uploaded</span>
+                        </div>
+                        <input type="file" id="tenthUpload" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="document.getElementById('tenthUpload').click()">Upload Document</button>
+                    </div>
+                    
+                    <!-- 12th Marksheet -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; background: #f8fafc; text-align: center;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem;">12th Marksheet</h3>
+                        <div id="twelfthDocStatus" style="margin: 1rem 0; min-height: 40px;">
+                            <span class="badge" style="background:#fee2e2; color:#ef4444;">Not Uploaded</span>
+                        </div>
+                        <input type="file" id="twelfthUpload" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="document.getElementById('twelfthUpload').click()">Upload Document</button>
+                    </div>
+                    
+                    <!-- Aadhar Card -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; background: #f8fafc; text-align: center;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem;">Aadhar / Identity Proof</h3>
+                        <div id="aadharDocStatus" style="margin: 1rem 0; min-height: 40px;">
+                            <span class="badge" style="background:#fee2e2; color:#ef4444;">Not Uploaded</span>
+                        </div>
+                        <input type="file" id="aadharUpload" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="document.getElementById('aadharUpload').click()">Upload Document</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Section -->
+            <div class="section" id="leaderboardSection">
+                <h2>Placement Stats & Leaderboard</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+                    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 2rem; border-radius: 12px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Highest Package</div>
+                        <div style="font-size: 3.5rem; font-weight: 800; color: #10b981; margin: 10px 0;" id="leaderHighest">0</div>
+                        <div style="font-size: 0.9rem; color: #cbd5e1;">Lakhs Per Annum</div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 2rem; border-radius: 12px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Average Package</div>
+                        <div style="font-size: 3.5rem; font-weight: 800; color: #3b82f6; margin: 10px 0;" id="leaderAverage">0</div>
+                        <div style="font-size: 0.9rem; color: #cbd5e1;">Lakhs Per Annum</div>
+                    </div>
+                    
+                    <div style="background: var(--card-bg); padding: 2rem; border-radius: 12px; grid-column: 1 / -1; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; color: var(--primary-color);">Branch-wise Placement</h3>
+                        <div id="branchProgressBars" style="margin-top: 1.5rem;">
+                            <!-- Progress bars loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Job Details Modal -->
+    <div id="jobDetailsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+        <div class="glass-card" style="width: 600px; max-width: 90%; max-height: 90vh; overflow-y: auto; position: relative;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 1rem;">
+                <div>
+                    <h2 id="modalJobTitle" style="margin: 0 0 0.5rem 0; color: var(--primary-color);">Job Title</h2>
+                    <h3 id="modalCompanyName" style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">Company Name</h3>
+                </div>
+                <button onclick="closeJobDetailsModal()" class="btn btn-outline" style="padding:0.2rem 0.8rem;">Close</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <strong>Location:</strong> <span id="modalLocation"></span>
+                </div>
+                <div>
+                    <strong>Salary Package:</strong> <span id="modalSalary"></span>
+                </div>
+                <div>
+                    <strong>Min CGPA:</strong> <span id="modalMinCgpa"></span>
+                </div>
+                <div>
+                    <strong>Last Date to Apply:</strong> <span id="modalLastDate"></span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Required Skills:</strong>
+                <p id="modalSkills" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Eligibility Criteria:</strong>
+                <p id="modalEligibility" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <strong>CTC Components:</strong>
+                <p id="modalCtcComponents" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Selection Rounds:</strong>
+                <p id="modalSelectionRounds" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Bond / Notice Details:</strong>
+                <p id="modalBondDetails" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <strong>Job Description:</strong>
+                <p id="modalDescription" style="margin-top: 0.5rem; color: var(--text-secondary); white-space: pre-wrap;"></p>
+            </div>
+            
+            <button id="modalApplyBtn" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Apply Now</button>
+            <div id="modalApplyMessage" style="text-align: center; margin-top: 10px; font-weight: 500;"></div>
+        </div>
+    </div>
+
+    <!-- Slots Modal -->
+    <div id="slotsModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-top: 0; color: var(--primary-color);">Select Interview Slot</h2>
+            <div id="slotsList" style="margin-top: 1rem;">
+                <!-- Slots loaded dynamically -->
+            </div>
+            <div style="text-align: right; margin-top: 1.5rem;">
+            <div class="section" id="testsSection">
+                <h2>Upcoming Online Tests</h2>
+                <div id="testsList">
+                    <div class="text-center" style="padding: 40px;">Loading tests...</div>
+                </div>
+            </div>
+
+            <!-- Resume Builder Section -->
+            <div class="section" id="resumeBuilderSection">
+                <h2>Resume Builder & AI Portfolio Review</h2>
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <div>
+                        <h3>Update Resume Profile</h3>
+                        <form id="resumeForm">
+                            <div class="form-group">
+                                <label>Projects (Markdown or Plain Text)</label>
+                                <textarea id="profileProjects" class="form-control" rows="4" placeholder="List your major projects"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Experience (Markdown or Plain Text)</label>
+                                <textarea id="profileExperience" class="form-control" rows="4" placeholder="List your internships or work experience"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Resume Profile</button>
+                        </form>
+                        
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+                            <button id="generateResumeBtn" class="btn btn-outline" style="width: 100%; border-color: var(--accent); color: var(--accent);">Generate Standard Resume (PDF)</button>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(37, 99, 235, 0.2);">
+                        <h3 style="margin-top: 0; color: var(--primary-color);">AI Resume Scorer</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Select a job to check your resume match percentage.</p>
+                        
+                        <select id="aiJobSelect" class="form-control" style="margin-bottom: 1rem;">
+                            <option value="">Select a Job to Analyze...</option>
+                        </select>
+                        <button id="aiAnalyzeBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;">Analyze Match</button>
+                        
+                        <div id="aiScoreResult" style="display: none;">
+                            <div style="font-size: 3rem; font-weight: bold; color: #10b981; text-align: center;" id="aiScorePercentage">0%</div>
+                            <div style="text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Match Score</div>
+                            
+                            <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Matched Skills:</h4>
+                            <div id="aiMatchedSkills" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;"></div>
+                            
+                            <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Missing Skills (Add these to improve):</h4>
+                            <div id="aiMissingSkills" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interview Calendar Section -->
+            <div class="section" id="interviewCalendarSection">
+                <h2>Interview Schedule & Calendar</h2>
+                <div id="calendar" style="margin-top: 1.5rem; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);"></div>
+            </div>
+
+            <!-- Documents Vault Section -->
+            <div class="section" id="documentsVaultSection">
+                <h2>Offer Letters & Documents Vault</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Securely store and manage your academic and professional documents.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <!-- 10th Marksheet -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; background: #f8fafc; text-align: center;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem;">10th Marksheet</h3>
+                        <div id="tenthDocStatus" style="margin: 1rem 0; min-height: 40px;">
+                            <span class="badge" style="background:#fee2e2; color:#ef4444;">Not Uploaded</span>
+                        </div>
+                        <input type="file" id="tenthUpload" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="document.getElementById('tenthUpload').click()">Upload Document</button>
+                    </div>
+                    
+                    <!-- 12th Marksheet -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; background: #f8fafc; text-align: center;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem;">12th Marksheet</h3>
+                        <div id="twelfthDocStatus" style="margin: 1rem 0; min-height: 40px;">
+                            <span class="badge" style="background:#fee2e2; color:#ef4444;">Not Uploaded</span>
+                        </div>
+                        <input type="file" id="twelfthUpload" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="document.getElementById('twelfthUpload').click()">Upload Document</button>
+                    </div>
+                    
+                    <!-- Aadhar Card -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; background: #f8fafc; text-align: center;">
+                        <h3 style="margin-top: 0; font-size: 1.1rem;">Aadhar / Identity Proof</h3>
+                        <div id="aadharDocStatus" style="margin: 1rem 0; min-height: 40px;">
+                            <span class="badge" style="background:#fee2e2; color:#ef4444;">Not Uploaded</span>
+                        </div>
+                        <input type="file" id="aadharUpload" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.9rem;" onclick="document.getElementById('aadharUpload').click()">Upload Document</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Section -->
+            <div class="section" id="leaderboardSection">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Placement Stats & Leaderboard</h2>
+                    <button id="exportReportBtn" class="btn btn-outline" style="display: flex; align-items: center; gap: 8px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Export PDF Report
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+                    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 2rem; border-radius: 12px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Highest Package</div>
+                        <div style="font-size: 3.5rem; font-weight: 800; color: #10b981; margin: 10px 0;" id="leaderHighest">0</div>
+                        <div style="font-size: 0.9rem; color: #cbd5e1;">Lakhs Per Annum</div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 2rem; border-radius: 12px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Average Package</div>
+                        <div style="font-size: 3.5rem; font-weight: 800; color: #3b82f6; margin: 10px 0;" id="leaderAverage">0</div>
+                        <div style="font-size: 0.9rem; color: #cbd5e1;">Lakhs Per Annum</div>
+                    </div>
+                    
+                    <div style="background: var(--card-bg); padding: 2rem; border-radius: 12px; grid-column: 1 / -1; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; color: var(--primary-color);">Branch-wise Placement</h3>
+                        <div id="branchProgressBars" style="margin-top: 1.5rem;">
+                            <!-- Progress bars loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Job Details Modal -->
+    <div id="jobDetailsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+        <div class="glass-card" style="width: 600px; max-width: 90%; max-height: 90vh; overflow-y: auto; position: relative;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 1rem;">
+                <div>
+                    <h2 id="modalJobTitle" style="margin: 0 0 0.5rem 0; color: var(--primary-color);">Job Title</h2>
+                    <h3 id="modalCompanyName" style="margin: 0; color: var(--text-primary); font-size: 1.1rem;">Company Name</h3>
+                </div>
+                <button onclick="closeJobDetailsModal()" class="btn btn-outline" style="padding:0.2rem 0.8rem;">Close</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <strong>Location:</strong> <span id="modalLocation"></span>
+                </div>
+                <div>
+                    <strong>Salary Package:</strong> <span id="modalSalary"></span>
+                </div>
+                <div>
+                    <strong>Min CGPA:</strong> <span id="modalMinCgpa"></span>
+                </div>
+                <div>
+                    <strong>Last Date to Apply:</strong> <span id="modalLastDate"></span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Required Skills:</strong>
+                <p id="modalSkills" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Eligibility Criteria:</strong>
+                <p id="modalEligibility" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <strong>CTC Components:</strong>
+                <p id="modalCtcComponents" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Selection Rounds:</strong>
+                <p id="modalSelectionRounds" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <strong>Bond / Notice Details:</strong>
+                <p id="modalBondDetails" style="margin-top: 0.5rem; color: var(--text-secondary);"></p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <strong>Job Description:</strong>
+                <p id="modalDescription" style="margin-top: 0.5rem; color: var(--text-secondary); white-space: pre-wrap;"></p>
+            </div>
+            
+            <button id="modalApplyBtn" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Apply Now</button>
+            <div id="modalApplyMessage" style="text-align: center; margin-top: 10px; font-weight: 500;"></div>
+        </div>
+    </div>
+
+    <!-- Slots Modal -->
+    <div id="slotsModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h2 style="margin-top: 0; color: var(--primary-color);">Select Interview Slot</h2>
+            <div id="slotsList" style="margin-top: 1rem;">
+                <!-- Slots loaded dynamically -->
+            </div>
+            <div style="text-align: right; margin-top: 1.5rem;">
+                <button class="btn btn-outline" style="color: var(--text-muted); border-color: #e2e8f0;" onclick="closeSlotsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette Modal -->
+    <div id="cmdPaletteOverlay">
+        <div id="cmdPalette">
+            <input type="text" id="cmdInput" placeholder="Search navigation, jobs, or type a command... (Esc to close)" autocomplete="off">
+            <div id="cmdResults"></div>
+        </div>
+    </div>
+
+    <!-- Live Activity & Completeness Widget (Floating) -->
+    <div style="position: fixed; bottom: 20px; right: 20px; width: 300px; display: flex; flex-direction: column; gap: 15px; z-index: 100;">
+        <!-- Profile Completeness -->
+        <div class="glass-panel" style="padding: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Profile Completeness</span>
+                <span style="font-size: 0.85rem; color: var(--primary-color); font-weight: 700;" id="profileCompletenessText">0%</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; overflow: hidden;">
+                <div id="profileCompletenessBar" style="height: 100%; width: 0%; background: var(--primary-color); transition: width 0.5s ease;"></div>
+            </div>
+            <div id="profileCompletenessHint" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">
+                Complete your profile to increase your chances.
+            </div>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="glass-panel" style="padding: 15px;">
+            <h4 style="margin-top: 0; font-size: 0.9rem; margin-bottom: 10px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: var(--success-color); border-radius: 50%; box-shadow: 0 0 8px var(--success-color); animation: pulse 1.5s infinite;"></span>
+                Live Activity
+            </h4>
+            <div id="liveActivityFeed" style="font-size: 0.8rem; color: var(--text-secondary); max-height: 100px; overflow-y: hidden; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Dynamically populated -->
+            </div>
+            <style>
+                @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+                @keyframes slideInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                .activity-item { animation: slideInUp 0.3s ease; }
+            </style>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Initialize 3D Tilt Effect on cards
+        VanillaTilt.init(document.querySelectorAll(".card, .glass-panel:not(.main-content):not(.sidebar)"), {
+            max: 5,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1,
+        });
+
+        // Parallax depth effect for main background elements
+        document.addEventListener("mousemove", (e) => {
+            const x = (window.innerWidth - e.pageX * 2) / 90;
+            const y = (window.innerHeight - e.pageY * 2) / 90;
+            document.body.style.backgroundPosition = `${x}px ${y}px`;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        // Make grids and lists draggable with smooth floating physics
+        document.querySelectorAll('#jobsList, #applicationsList, #testsList, [style*="display: grid"]').forEach(grid => {
+            if(grid) {
+                new Sortable(grid, {
+                    animation: 400,
+                    easing: "cubic-bezier(0.25, 1, 0.5, 1)", // Smooth float physics
+                    ghostClass: 'sortable-ghost',
+                    dragClass: 'sortable-drag'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
